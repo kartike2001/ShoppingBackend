@@ -79,11 +79,20 @@ This command will build the Docker images and start the containers for the Flask
   - `Cookie: authToken=<your_auth_token>` (Replace `<your_auth_token>` with the token received in the login response, once selected on Postman you can uncheck the header for a GET request or whenever not needed)
 - **Body:**
 
+Won't be able to enter a negative `itemPrice` or a zero/negative `itemQuantity`
 ```json
 {
     "itemName": "Apple",
     "itemPrice": 0.99,
     "itemQuantity": 10
+}
+```
+If the price and Item name are same it should update the quantity
+```json
+{
+    "itemName": "Apple",
+    "itemPrice": 0.99,
+    "itemQuantity": 3
 }
 ```
 ```json
@@ -101,7 +110,23 @@ This command will build the Docker images and start the containers for the Flask
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
-#### 5. Remove Item from Cart
+#### 5. Update Cart Quantity
+
+- **URL:** `http://localhost:5000/updateCartQuantity`
+- **Method:** `POST`
+- **Headers:**
+  - `Content-Type: application/json`
+  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
+
+Replace with the actual cart item id you want to update
+```json
+{
+    "cart_id": 1, 
+    "itemQuantity": 5
+}
+```
+
+#### 6. Remove Item from Cart
 
 - **URL:** `http://localhost:5000/removeFromCart`
 - **Method:** `POST`
@@ -113,21 +138,6 @@ This command will build the Docker images and start the containers for the Flask
 ```json
 {
     "cart_id": 1  
-}
-```
-
-#### 6. Update Cart Quantity
-
-- **URL:** `http://localhost:5000/updateCartQuantity`
-- **Method:** `POST`
-- **Headers:**
-  - `Content-Type: application/json`
-  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
-
-```json
-{
-    "cart_id": 1,  // Replace with the actual cart item id you want to update
-    "itemQuantity": 5
 }
 ```
 
