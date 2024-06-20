@@ -27,9 +27,10 @@ This is a simple Shopping Cart service implemented using Flask and PostgreSQL. T
 ```sh
 git clone https://github.com/kartike2001/ShoppingBackend.git
 ```
+
 2. **CD into the repository directory**
     
-2. **Start the Docker containers:**
+3. **Start the Docker containers:**
 
 ```sh
 docker-compose up --build
@@ -155,7 +156,6 @@ Replace with the actual cart item id you want to update
 - **Method:** `GET`
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
-
 
 #### 9. Logout
 
