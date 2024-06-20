@@ -24,7 +24,9 @@ This is a simple Shopping Cart service implemented using Flask and PostgreSQL. T
 
 1. **Clone the repository:**
 
+```sh
 git clone 
+```
 
 2. **Start the Docker containers:**
 
@@ -96,7 +98,7 @@ This command will build the Docker images and start the containers for the Flask
 - **URL:** `http://localhost:5000/viewCart`
 - **Method:** `GET`
 - **Headers:**
-  - `Cookie: authToken=<your_auth_token>` (Replace `<your_auth_token>` with the token received in the login response)
+  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
 #### 5. Remove Item from Cart
 
@@ -104,7 +106,7 @@ This command will build the Docker images and start the containers for the Flask
 - **Method:** `POST`
 - **Headers:**
   - `Content-Type: application/json`
-  - `Cookie: authToken=<your_auth_token>` (Replace `<your_auth_token>` with the token received in the login response)
+  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 - **Body:**
 
 ```json
@@ -119,8 +121,7 @@ This command will build the Docker images and start the containers for the Flask
 - **Method:** `POST`
 - **Headers:**
   - `Content-Type: application/json`
-  - `Cookie: authToken=<your_auth_token>` (Replace `<your_auth_token>` with the token received in the login response)
-- **Body:**
+  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
 ```json
 {
@@ -135,7 +136,7 @@ This command will build the Docker images and start the containers for the Flask
 - **Method:** `POST`
 - **Headers:**
   - `Content-Type: application/json`
-  - `Cookie: authToken=<your_auth_token>` (Replace `<your_auth_token>` with the token received in the login response)
+  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
 #### 8. View Order History
 
