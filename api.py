@@ -102,7 +102,7 @@ def verify_user():
         return jsonify({"message": "Internal Server Error"}), 500
 
 
-# Add Item to cart endpoint
+# Add Item Endpoint
 @app.route('/addToCart', methods=['POST'])
 def add_to_cart():
     try:
@@ -113,12 +113,28 @@ def add_to_cart():
             user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cartInformation = request.json
-                itemName = (helpers.escape_sql(cartInformation["itemName"]))
-                itemPrice = (helpers.escape_sql(cartInformation["itemPrice"]))
-                itemQuantity = (helpers.escape_sql(cartInformation["itemQuantity"]))
-                db.add_to_cart(user[0][3], itemName, itemPrice, itemQuantity)
+                itemName = helpers.escape_sql(cartInformation["itemName"])
+                itemPrice = float(helpers.escape_sql(cartInformation["itemPrice"]))
+                itemQuantity = int(helpers.escape_sql(cartInformation["itemQuantity"]))
+
+                if itemPrice < 0:
+                    return jsonify({"message": "Price must be non-negative"}), 400
+
+                if itemQuantity <= 0:
+                    return jsonify({"message": "Quantity must not be 0 or non-negative"}), 400
+
+                existing_item = db.get_cart_item(user[0][3], itemName, itemPrice)
+
+                if existing_item:
+                    new_quantity = existing_item[0][4] + itemQuantity
+                    db.update_cart_quantity(existing_item[0][0], new_quantity)
+                    message = "Quantity updated"
+                else:
+                    db.add_to_cart(user[0][3], itemName, itemPrice, itemQuantity)
+                    message = f"Added {itemName} to the cart!"
+
                 db.closeConnection()
-                return jsonify({"message": f"Added {itemName} to the cart!"}), 200
+                return jsonify({"message": message}), 200
             else:
                 db.closeConnection()
                 return jsonify({"message": "User verification failed"}), 401
@@ -184,10 +200,18 @@ def update_cart_quantity():
             user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cart_id = request.json['cart_id']
-                itemQuantity = request.json['itemQuantity']
-                db.update_cart_quantity(cart_id, itemQuantity)
-                db.closeConnection()
-                return jsonify({"message": "Cart item quantity updated"}), 200
+                itemQuantity = int(request.json['itemQuantity'])
+
+                if itemQuantity < 0:
+                    return jsonify({"message": "You can't set quantity negative"}), 400
+                elif itemQuantity == 0:
+                    db.remove_from_cart(cart_id)
+                    db.closeConnection()
+                    return jsonify({"message": "Item removed from cart"}), 200
+                else:
+                    db.update_cart_quantity(cart_id, itemQuantity)
+                    db.closeConnection()
+                    return jsonify({"message": "Cart item quantity updated"}), 200
             else:
                 db.closeConnection()
                 return jsonify({"message": "User verification failed"}), 401
@@ -196,7 +220,6 @@ def update_cart_quantity():
     except Exception as e:
         logger.error("Error updating cart quantity: %s", e)
         return jsonify({"message": "Internal Server Error"}), 500
-
 
 # Checkout cart endpoint
 @app.route('/checkoutCart', methods=['POST'])

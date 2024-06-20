@@ -77,6 +77,13 @@ class dbmethods:
             (username, itemName, itemPrice, itemQuantity, False))
         self.connection.commit()
 
+    # Get an single Item
+    def get_cart_item(self, username, itemName, itemPrice):
+        self.cur.execute(
+            "SELECT * FROM cart WHERE username = %s AND itemName = %s AND itemPrice = %s AND bought = False",
+            (username, itemName, itemPrice))
+        return self.cur.fetchall()
+
     # View cart
     def view_cart(self, username):
         username = helpers.escape_html(username)
@@ -97,7 +104,9 @@ class dbmethods:
     # Update cart quantity
     def update_cart_quantity(self, cart_id, itemQuantity):
         self.cur.execute(
-            "UPDATE cart SET itemQuantity = %s WHERE id = %s", (itemQuantity, cart_id))
+            "UPDATE cart SET itemQuantity = %s WHERE id = %s",
+            (itemQuantity, cart_id)
+        )
         self.connection.commit()
 
     # Checkout entire cart
