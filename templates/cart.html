@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+<h1>Cart</h1>
+<button onclick="window.location.href='/'">Home</button>
+<button onclick="window.location.href='/orderHistoryPage'">Order History</button>
+
+<button id="logout-button">Logout</button>
+<h2>Add Item to Cart</h2>
+<form id="add-to-cart-form">
+    <label for="item-name">Item Name:</label>
+    <input type="text" id="item-name" name="item-name" required>
+    <br>
+    <label for="item-price">Item Price:</label>
+    <input type="number" step="0.01" id="item-price" name="item-price" required>
+    <br>
+    <label for="item-quantity">Item Quantity:</label>
+    <input type="number" id="item-quantity" name="item-quantity" required>
+    <br>
+    <button type="submit">Add to Cart</button>
+</form>
+<h2>Your Cart</h2>
+<div id="cart-items"></div>
+<h3>Total: $<span id="cart-total">0.00</span></h3>
+<button id="checkout-button">Checkout</button>
+<script src="/static/js/main.js"></script>
+</body>
+</html>

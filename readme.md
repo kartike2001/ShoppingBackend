@@ -1,7 +1,6 @@
 # Shopping Cart Service
 
 This is a simple Shopping Cart service implemented using Flask and PostgreSQL. The service allows users to:
-
 - Register and log in.
 - Add items to a shopping cart.
 - View items in the cart.
@@ -84,7 +83,6 @@ This command will build the Docker images and start the containers for the Flask
     "itemQuantity": 10
 }
 ```
-
 ```json
 {
     "itemName": "Banana",
