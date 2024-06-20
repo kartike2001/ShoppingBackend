@@ -55,9 +55,9 @@ def send_static(path):
 def create_user():
     try:
         userInformation = request.json
-        name = helpers.escape_html(helpers.escape_sql(userInformation["name"]))
-        email = helpers.escape_html(helpers.escape_sql(userInformation["email"]))
-        plainTextPassword = helpers.escape_html(helpers.escape_sql(userInformation["password"]))
+        name = (helpers.escape_sql(userInformation["name"]))
+        email = (helpers.escape_sql(userInformation["email"]))
+        plainTextPassword = (helpers.escape_sql(userInformation["password"]))
         username = email.split("@")[0]
         salt = bcrypt.gensalt()
         hashedPassword = bcrypt.hashpw(plainTextPassword.encode('utf-8'), salt)
@@ -81,8 +81,8 @@ def create_user():
 def verify_user():
     try:
         userInformation = request.json
-        email = helpers.escape_html(helpers.escape_sql(userInformation['email']))
-        plainTextPassword = helpers.escape_html(helpers.escape_sql(userInformation['password']))
+        email = (helpers.escape_sql(userInformation['email']))
+        plainTextPassword = (helpers.escape_sql(userInformation['password']))
         db = dbmethods()
         user = db.verifyLogin(helpers.escape_sql(email))
         if user and bcrypt.checkpw(plainTextPassword.encode('utf-8'), user[0][4].encode('utf-8')):
@@ -113,9 +113,9 @@ def add_to_cart():
             user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cartInformation = request.json
-                itemName = helpers.escape_html(helpers.escape_sql(cartInformation["itemName"]))
-                itemPrice = helpers.escape_html(helpers.escape_sql(cartInformation["itemPrice"]))
-                itemQuantity = helpers.escape_html(helpers.escape_sql(cartInformation["itemQuantity"]))
+                itemName = (helpers.escape_sql(cartInformation["itemName"]))
+                itemPrice = (helpers.escape_sql(cartInformation["itemPrice"]))
+                itemQuantity = (helpers.escape_sql(cartInformation["itemQuantity"]))
                 db.add_to_cart(user[0][3], itemName, itemPrice, itemQuantity)
                 db.closeConnection()
                 return jsonify({"message": f"Added {itemName} to the cart!"}), 200

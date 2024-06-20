@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const profileForm = document.getElementById('profile-form');
     const orderHistoryDiv = document.getElementById('order-history');
     const cartTotal = document.getElementById('cart-total');
+    const userNameHeader = document.getElementById('user-name');
 
     if (registerForm) {
         registerForm.addEventListener('submit', function (event) {
@@ -127,9 +128,10 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
+                userNameHeader.textContent = `Hello, ${data.userName}`;
                 cartItemsDiv.innerHTML = '';
                 let total = 0;
-                data.forEach(item => {
+                data.items.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.innerHTML = `Name: ${item.itemName}, Price: ${item.itemPrice}, Quantity: 
                     <input type="number" value="${item.itemQuantity}" data-id="${item.id}" class="update-quantity">
@@ -242,9 +244,10 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
+                userNameHeader.textContent = `Hello, ${data.userName}`;
                 orderHistoryDiv.innerHTML = '';
-                Object.keys(data).forEach(session_id => {
-                    const session = data[session_id];
+                Object.keys(data.sessions).forEach(session_id => {
+                    const session = data.sessions[session_id];
                     const sessionDiv = document.createElement('div');
                     sessionDiv.innerHTML = `<h3>Order Date: ${session.orderDate}</h3>`;
                     session.items.forEach(item => {

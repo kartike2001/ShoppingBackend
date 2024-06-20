@@ -9,42 +9,8 @@
 <body>
 <h1>Welcome to the Shopping Cart Service</h1>
 <div id="user-info">
-    <a href="/register">Register</a> | <a href="/login">Login</a>
+    <a href="/register">Register</a> | <a href="/login">Login</a> | <a href="/cart">Cart</a> | <a href="/orderHistoryPage">Order History</a>
 </div>
 <script src="/static/js/main.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const authToken = document.cookie.split('=')[1];
-        if (authToken) {
-            fetch('/userProfile', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': `authToken=${authToken}`
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.name) {
-                        document.getElementById('user-info').innerHTML = `
-                        <span>Welcome, ${data.name}</span> |
-                        <a href="/orderHistoryPage">Order History</a> |
-                        <button id="logout-button">Logout</button>
-                    `;
-                        document.getElementById('logout-button').addEventListener('click', function() {
-                            fetch('/logout', {
-                                method: 'POST'
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    alert(data.message);
-                                    window.location.href = '/';
-                                });
-                        });
-                    }
-                });
-        }
-    });
-</script>
 </body>
 </html>
