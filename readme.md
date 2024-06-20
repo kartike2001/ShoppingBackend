@@ -145,30 +145,8 @@ This command will build the Docker images and start the containers for the Flask
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
-#### 9. View User Profile
 
-- **URL:** `http://localhost:5000/userProfile`
-- **Method:** `GET`
-- **Headers:**
-  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
-
-#### 10. Update User Profile
-
-- **URL:** `http://localhost:5000/updateUserProfile`
-- **Method:** `POST`
-- **Headers:**
-  - `Content-Type: application/json`
-  - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
-- **Body:**
-
-```json
-{
-    "name": "John Doe",
-    "email": "john.doe@example.com"
-}
-```
-
-#### 11. Logout
+#### 9. Logout
 
 - **URL:** `http://localhost:5000/logout`
 - **Method:** `POST`
