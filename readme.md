@@ -49,8 +49,8 @@ This command will build the Docker images and start the containers for the Flask
 
 ```json
 {
-    "name": "John Doe",
-    "email": "john.doe@example.com",
+    "name": "Kartike Chaurasia",
+    "email": "kartike.chau@example.com",
     "password": "password123"
 }
 ```
@@ -65,7 +65,7 @@ This command will build the Docker images and start the containers for the Flask
 
 ```json
 {
-    "email": "john.doe@example.com",
+    "email": "kartike.chau@example.com",
     "password": "password123"
 }
 ```
@@ -112,7 +112,7 @@ This command will build the Docker images and start the containers for the Flask
 
 ```json
 {
-    "cart_id": 1  // Replace with the actual cart item id you want to remove
+    "cart_id": 1  
 }
 ```
 
