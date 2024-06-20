@@ -151,18 +151,6 @@ def view_cart():
         return jsonify({"message": "Internal Server Error"}), 500
 
 
-# Logout endpoint
-@app.route('/logout', methods=['POST'])
-def logout():
-    try:
-        response = make_response(jsonify({"message": "User logged out successfully"}))
-        response.set_cookie(key='authToken', value='', expires=0)
-        return response, 200
-    except Exception as e:
-        logger.error("Error logging out: %s", e)
-        return jsonify({"message": "Internal Server Error"}), 500
-
-
 # Remove cart endpoint
 @app.route('/removeFromCart', methods=['POST'])
 def remove_from_cart():
@@ -251,6 +239,18 @@ def order_history():
             return jsonify({"message": "Authentication required"}), 401
     except Exception as e:
         logger.error("Error retrieving order history: %s", e)
+        return jsonify({"message": "Internal Server Error"}), 500
+
+
+# Logout endpoint
+@app.route('/logout', methods=['POST'])
+def logout():
+    try:
+        response = make_response(jsonify({"message": "User logged out successfully"}))
+        response.set_cookie(key='authToken', value='', expires=0)
+        return response, 200
+    except Exception as e:
+        logger.error("Error logging out: %s", e)
         return jsonify({"message": "Internal Server Error"}), 500
 
 
