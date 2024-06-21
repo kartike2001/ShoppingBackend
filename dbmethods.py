@@ -91,7 +91,7 @@ class dbmethods:
         self.cur.execute(
             "SELECT * FROM cart WHERE user_id = %s AND bought = False", (user_id,))
         items = [{"id": item[0], "itemName": item[2], "itemPrice": float(item[3]), "itemQuantity": item[4]} for item in self.cur.fetchall()]
-        return {"userName": user[0], "items": items}
+        return {"userName": user[0], "userID": user_id, "items": items}
 
     # Remove from cart
     def remove_from_cart(self, cart_id):
