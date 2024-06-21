@@ -65,7 +65,7 @@ This command will build the Docker images and start the containers for the Flask
 
 ```json
 {
-    "email": "kartike.chau@example.com",
+    "email": "kartike.chau@philips.com",
     "password": "password123"
 }
 ```
@@ -82,23 +82,23 @@ This command will build the Docker images and start the containers for the Flask
 Won't be able to enter a negative `itemPrice` or a zero/negative `itemQuantity`
 ```json
 {
-    "itemName": "Apple",
-    "itemPrice": 0.99,
+    "itemName": "IntelliVue MX400",
+    "itemPrice": 9999.99,
     "itemQuantity": 10
 }
 ```
 If the price and Item name are same it should update the quantity
 ```json
 {
-    "itemName": "Apple",
-    "itemPrice": 0.99,
+    "itemName": "IntelliVue MX400",
+    "itemPrice": 9999.99,
     "itemQuantity": 3
 }
 ```
 ```json
 {
-    "itemName": "Banana",
-    "itemPrice": 0.49,
+    "itemName": "IntelliVue MX850",
+    "itemPrice": 19999.49,
     "itemQuantity": 3
 }
 ```
