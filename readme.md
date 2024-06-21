@@ -50,7 +50,7 @@ This command will build the Docker images and start the containers for the Flask
 ```json
 {
     "name": "Kartike Chaurasia",
-    "email": "kartike.chau@example.com",
+    "email": "kartike.chau@philips.com",
     "password": "password123"
 }
 ```
