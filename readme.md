@@ -8,7 +8,6 @@ This is a simple Shopping Cart service implemented using Flask and PostgreSQL. T
 - Update the quantity of items in the cart.
 - Checkout the cart.
 - View order history.
-- View and update user profile.
 - Logout.
 
 ## Getting Started
