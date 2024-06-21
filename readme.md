@@ -47,7 +47,7 @@ This command will build the Docker images and start the containers for the Flask
   - `Content-Type: application/json`
 - **Body:**
   
-To test on post select raw JSON
+To test on Postman select raw JSON
 
 ```json
 {
@@ -65,7 +65,7 @@ To test on post select raw JSON
   - `Content-Type: application/json`
 - **Body:**
   
-To test on post select raw JSON
+To test on Postman select raw JSON
 
 ```json
 {
@@ -85,7 +85,7 @@ To test on post select raw JSON
 
 Won't be able to enter a negative `itemPrice` or a zero/negative `itemQuantity`
 
-To test on post select raw JSON
+To test on Postman select raw JSON
 
 ```json
 {
@@ -127,7 +127,7 @@ If the price and Item name are same it should update the quantity
 
 Replace with the actual cart item id you want to update
 
-To test on post select raw JSON
+To test on Postman select raw JSON
 
 ```json
 {
@@ -145,7 +145,7 @@ To test on post select raw JSON
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 - **Body:**
   
-To test on post select raw JSON
+To test on Postman select raw JSON
 
 ```json
 {
