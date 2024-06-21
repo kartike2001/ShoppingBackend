@@ -58,12 +58,11 @@ def create_user():
         name = helpers.sanitize_input(userInformation["name"])
         email = helpers.sanitize_input(userInformation["email"])
         plainTextPassword = helpers.sanitize_input(userInformation["password"])
-        username = email.split("@")[0]
         salt = bcrypt.gensalt()
         hashedPassword = bcrypt.hashpw(plainTextPassword.encode('utf-8'), salt)
         authToken = helpers.generate_token()
         db = dbmethods()
-        db.create_user(name, email, username, hashedPassword.decode(), hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+        db.create_user(name, email, hashedPassword.decode(), hashlib.sha256(authToken.encode("utf-8")).hexdigest())
         db.closeConnection()
         content = {"message": "User created successfully"}
         response = make_response(jsonify(content))
@@ -82,12 +81,12 @@ def verify_user():
         email = helpers.sanitize_input(userInformation['email'])
         plainTextPassword = helpers.sanitize_input(userInformation['password'])
         db = dbmethods()
-        user = db.verifyLogin(email)
-        if user and bcrypt.checkpw(plainTextPassword.encode('utf-8'), user[0][4].encode('utf-8')):
+        user = db.verify_login(email)
+        if user and bcrypt.checkpw(plainTextPassword.encode('utf-8'), user[0][3].encode('utf-8')):
             authToken = helpers.generate_token()
-            db.update_authToken(user[0][3], hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            db.update_auth_token(user[0][0], hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             db.closeConnection()
-            content = {"message": "User verified successfully", "name": user[0][1], "username": user[0][3], "email": user[0][2], "authToken": authToken}
+            content = {"message": "User verified successfully", "name": user[0][1], "user_id": user[0][0], "email": user[0][2], "authToken": authToken}
             response = make_response(jsonify(content))
             response.set_cookie(key="authToken", value=authToken, httponly=True, max_age=3600)
             return response, 200
@@ -106,12 +105,12 @@ def add_to_cart():
         authToken = request.cookies.get('authToken')
         if authToken:
             db = dbmethods()
-            user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cartInformation = request.json
                 itemName = helpers.sanitize_input(cartInformation["itemName"])
-                itemPrice = helpers.sanitize_input(float(str(cartInformation["itemPrice"])))
-                itemQuantity = helpers.sanitize_input(int(str(cartInformation["itemQuantity"])))
+                itemPrice = helpers.sanitize_input(float(cartInformation["itemPrice"]))
+                itemQuantity = helpers.sanitize_input(int(cartInformation["itemQuantity"]))
 
                 if itemPrice < 0:
                     return jsonify({"message": "Price must be non-negative"}), 400
@@ -119,14 +118,14 @@ def add_to_cart():
                 if itemQuantity <= 0:
                     return jsonify({"message": "Quantity must not be 0 or non-negative"}), 400
 
-                existing_item = db.get_cart_item(user[0][3], itemName, itemPrice)
+                existing_item = db.get_cart_item(user[0][0], itemName, itemPrice)
 
                 if existing_item:
                     new_quantity = existing_item[0][4] + itemQuantity
                     db.update_cart_quantity(existing_item[0][0], new_quantity)
                     message = "Quantity updated"
                 else:
-                    db.add_to_cart(user[0][3], itemName, itemPrice, itemQuantity)
+                    db.add_to_cart(user[0][0], itemName, itemPrice, itemQuantity)
                     message = f"Added {itemName} to the cart!"
 
                 db.closeConnection()
@@ -148,9 +147,9 @@ def view_cart():
         authToken = request.cookies.get('authToken')
         if authToken:
             db = dbmethods()
-            user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
-                cart = db.view_cart(user[0][3])
+                cart = db.view_cart(user[0][0])
                 db.closeConnection()
                 return jsonify(cart), 200
             else:
@@ -170,7 +169,7 @@ def remove_from_cart():
         authToken = request.cookies.get('authToken')
         if authToken:
             db = dbmethods()
-            user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cart_id = helpers.sanitize_input(request.json['cart_id'])
                 db.remove_from_cart(cart_id)
@@ -193,10 +192,10 @@ def update_cart_quantity():
         authToken = request.cookies.get('authToken')
         if authToken:
             db = dbmethods()
-            user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cart_id = helpers.sanitize_input(request.json['cart_id'])
-                itemQuantity = int(helpers.sanitize_input(str(request.json['itemQuantity'])))
+                itemQuantity = helpers.sanitize_input(int(request.json['itemQuantity']))
 
                 if itemQuantity < 0:
                     return jsonify({"message": "You can't set quantity negative"}), 400
@@ -225,9 +224,9 @@ def checkout_cart():
         authToken = request.cookies.get('authToken')
         if authToken:
             db = dbmethods()
-            user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
-                db.checkout_entire_cart(user[0][3])
+                db.checkout_entire_cart(user[0][0])
                 db.closeConnection()
                 return jsonify({"message": "Cart checked out successfully"}), 200
             else:
@@ -247,9 +246,9 @@ def order_history():
         authToken = request.cookies.get('authToken')
         if authToken:
             db = dbmethods()
-            user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
-                history = db.get_order_history(user[0][3])
+                history = db.get_order_history(user[0][0])
                 db.closeConnection()
                 return jsonify(history), 200
             else:
