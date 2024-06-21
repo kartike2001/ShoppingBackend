@@ -86,14 +86,13 @@ class dbmethods:
 
     # View cart
     def view_cart(self, username):
-        username = helpers.escape_html(username)
         self.cur.execute(
             "SELECT name FROM users WHERE username = %s", (username,))
         user = self.cur.fetchone()
         self.cur.execute(
             "SELECT * FROM cart WHERE username = %s AND bought = False", (username,))
         items = [{"id": item[0], "itemName": item[2], "itemPrice": float(item[3]), "itemQuantity": item[4]} for item in self.cur.fetchall()]
-        return {"userName": helpers.escape_html(user[0]), "items": items}
+        return {"userName": user[0], "items": items}
 
     # Remove from cart
     def remove_from_cart(self, cart_id):
@@ -127,7 +126,6 @@ class dbmethods:
 
     # Get order history
     def get_order_history(self, username):
-        username = helpers.escape_html(username)
         self.cur.execute(
             "SELECT name FROM users WHERE username = %s", (username,))
         user = self.cur.fetchone()
@@ -143,11 +141,11 @@ class dbmethods:
                     "items": []
                 }
             sessions[session_id]["items"].append({
-                "itemName": helpers.escape_html(record[2]),
+                "itemName": record[2],
                 "itemPrice": float(record[3]),
                 "itemQuantity": record[4]
             })
-        return {"userName": helpers.escape_html(user[0]), "sessions": sessions}
+        return {"userName": user[0], "sessions": sessions}
 
     # Get user profile
     def get_user_profile(self, username):

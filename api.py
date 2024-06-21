@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, make_response, render_template, send_
 from flask_cors import CORS
 import bcrypt
 from dbmethods import dbmethods
-import helpers 
+import helpers
 import hashlib
 
 # Create the Flask app
@@ -55,17 +55,15 @@ def send_static(path):
 def create_user():
     try:
         userInformation = request.json
-        name = (helpers.escape_sql(userInformation["name"]))
-        email = (helpers.escape_sql(userInformation["email"]))
-        plainTextPassword = (helpers.escape_sql(userInformation["password"]))
+        name = helpers.sanitize_input(userInformation["name"])
+        email = helpers.sanitize_input(userInformation["email"])
+        plainTextPassword = helpers.sanitize_input(userInformation["password"])
         username = email.split("@")[0]
         salt = bcrypt.gensalt()
         hashedPassword = bcrypt.hashpw(plainTextPassword.encode('utf-8'), salt)
         authToken = helpers.generate_token()
         db = dbmethods()
-        db.create_user(helpers.escape_sql(name), helpers.escape_sql(email), helpers.escape_sql(username),
-                       helpers.escape_sql(hashedPassword.decode()),
-                       hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+        db.create_user(name, email, username, hashedPassword.decode(), hashlib.sha256(authToken.encode("utf-8")).hexdigest())
         db.closeConnection()
         content = {"message": "User created successfully"}
         response = make_response(jsonify(content))
@@ -81,16 +79,15 @@ def create_user():
 def verify_user():
     try:
         userInformation = request.json
-        email = (helpers.escape_sql(userInformation['email']))
-        plainTextPassword = (helpers.escape_sql(userInformation['password']))
+        email = helpers.sanitize_input(userInformation['email'])
+        plainTextPassword = helpers.sanitize_input(userInformation['password'])
         db = dbmethods()
-        user = db.verifyLogin(helpers.escape_sql(email))
+        user = db.verifyLogin(email)
         if user and bcrypt.checkpw(plainTextPassword.encode('utf-8'), user[0][4].encode('utf-8')):
             authToken = helpers.generate_token()
             db.update_authToken(user[0][3], hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             db.closeConnection()
-            content = {"message": "User verified successfully", "name": user[0][1], "username": user[0][3],
-                       "email": user[0][2], "authToken": authToken}
+            content = {"message": "User verified successfully", "name": user[0][1], "username": user[0][3], "email": user[0][2], "authToken": authToken}
             response = make_response(jsonify(content))
             response.set_cookie(key="authToken", value=authToken, httponly=True, max_age=3600)
             return response, 200
@@ -102,20 +99,19 @@ def verify_user():
         return jsonify({"message": "Internal Server Error"}), 500
 
 
-# Add Item Endpoint
+# Add Item to cart endpoint
 @app.route('/addToCart', methods=['POST'])
 def add_to_cart():
     try:
         authToken = request.cookies.get('authToken')
-        logger.debug("Received authToken: %s", authToken)
         if authToken:
             db = dbmethods()
             user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cartInformation = request.json
-                itemName = helpers.escape_sql(cartInformation["itemName"])
-                itemPrice = float(helpers.escape_sql(cartInformation["itemPrice"]))
-                itemQuantity = int(helpers.escape_sql(cartInformation["itemQuantity"]))
+                itemName = helpers.sanitize_input(cartInformation["itemName"])
+                itemPrice = helpers.sanitize_input(float(str(cartInformation["itemPrice"])))
+                itemQuantity = helpers.sanitize_input(int(str(cartInformation["itemQuantity"])))
 
                 if itemPrice < 0:
                     return jsonify({"message": "Price must be non-negative"}), 400
@@ -167,7 +163,7 @@ def view_cart():
         return jsonify({"message": "Internal Server Error"}), 500
 
 
-# Remove cart endpoint
+# Remove from cart endpoint
 @app.route('/removeFromCart', methods=['POST'])
 def remove_from_cart():
     try:
@@ -176,7 +172,7 @@ def remove_from_cart():
             db = dbmethods()
             user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
-                cart_id = request.json['cart_id']
+                cart_id = helpers.sanitize_input(request.json['cart_id'])
                 db.remove_from_cart(cart_id)
                 db.closeConnection()
                 return jsonify({"message": "Item removed from cart"}), 200
@@ -199,8 +195,8 @@ def update_cart_quantity():
             db = dbmethods()
             user = db.verifyAuth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
-                cart_id = request.json['cart_id']
-                itemQuantity = int(request.json['itemQuantity'])
+                cart_id = helpers.sanitize_input(request.json['cart_id'])
+                itemQuantity = int(helpers.sanitize_input(str(request.json['itemQuantity'])))
 
                 if itemQuantity < 0:
                     return jsonify({"message": "You can't set quantity negative"}), 400
@@ -220,6 +216,7 @@ def update_cart_quantity():
     except Exception as e:
         logger.error("Error updating cart quantity: %s", e)
         return jsonify({"message": "Internal Server Error"}), 500
+
 
 # Checkout cart endpoint
 @app.route('/checkoutCart', methods=['POST'])
