@@ -86,7 +86,8 @@ def verify_user():
             authToken = helpers.generate_token()
             db.update_auth_token(user[0][0], hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             db.closeConnection()
-            content = {"message": "User verified successfully", "name": user[0][1], "user_id": user[0][0], "email": user[0][2], "authToken": authToken}
+            content = {"message": "User verified successfully", "name": user[0][1], "user_id": user[0][0],
+                       "email": user[0][2], "authToken": authToken}
             response = make_response(jsonify(content))
             response.set_cookie(key="authToken", value=authToken, httponly=True, max_age=3600)
             return response, 200
@@ -140,53 +141,8 @@ def add_to_cart():
         return jsonify({"message": "Internal Server Error"}), 500
 
 
-# View Cart endpoint
-@app.route('/viewCart', methods=['GET'])
-def view_cart():
-    try:
-        authToken = request.cookies.get('authToken')
-        if authToken:
-            db = dbmethods()
-            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
-            if user:
-                cart = db.view_cart(user[0][0])
-                db.closeConnection()
-                return jsonify(cart), 200
-            else:
-                db.closeConnection()
-                return jsonify({"message": "User verification failed"}), 401
-        else:
-            return jsonify({"message": "Authentication required"}), 401
-    except Exception as e:
-        logger.error("Error viewing cart: %s", e)
-        return jsonify({"message": "Internal Server Error"}), 500
-
-
-# Remove from cart endpoint
-@app.route('/removeFromCart', methods=['POST'])
-def remove_from_cart():
-    try:
-        authToken = request.cookies.get('authToken')
-        if authToken:
-            db = dbmethods()
-            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
-            if user:
-                cart_id = helpers.sanitize_input(request.json['cart_id'])
-                db.remove_from_cart(cart_id)
-                db.closeConnection()
-                return jsonify({"message": "Item removed from cart"}), 200
-            else:
-                db.closeConnection()
-                return jsonify({"message": "User verification failed"}), 401
-        else:
-            return jsonify({"message": "Authentication required"}), 401
-    except Exception as e:
-        logger.error("Error removing from cart: %s", e)
-        return jsonify({"message": "Internal Server Error"}), 500
-
-
 # Update cart quantity endpoint
-@app.route('/updateCartQuantity', methods=['POST'])
+@app.route('/updateCartQuantity', methods=['PUT'])
 def update_cart_quantity():
     try:
         authToken = request.cookies.get('authToken')
@@ -214,6 +170,51 @@ def update_cart_quantity():
             return jsonify({"message": "Authentication required"}), 401
     except Exception as e:
         logger.error("Error updating cart quantity: %s", e)
+        return jsonify({"message": "Internal Server Error"}), 500
+
+
+# Remove from cart endpoint
+@app.route('/removeFromCart', methods=['DELETE'])
+def remove_from_cart():
+    try:
+        authToken = request.cookies.get('authToken')
+        if authToken:
+            db = dbmethods()
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            if user:
+                cart_id = helpers.sanitize_input(request.json['cart_id'])
+                db.remove_from_cart(cart_id)
+                db.closeConnection()
+                return jsonify({"message": "Item removed from cart"}), 200
+            else:
+                db.closeConnection()
+                return jsonify({"message": "User verification failed"}), 401
+        else:
+            return jsonify({"message": "Authentication required"}), 401
+    except Exception as e:
+        logger.error("Error removing from cart: %s", e)
+        return jsonify({"message": "Internal Server Error"}), 500
+
+
+# View Cart endpoint
+@app.route('/viewCart', methods=['GET'])
+def view_cart():
+    try:
+        authToken = request.cookies.get('authToken')
+        if authToken:
+            db = dbmethods()
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            if user:
+                cart = db.view_cart(user[0][0])
+                db.closeConnection()
+                return jsonify(cart), 200
+            else:
+                db.closeConnection()
+                return jsonify({"message": "User verification failed"}), 401
+        else:
+            return jsonify({"message": "Authentication required"}), 401
+    except Exception as e:
+        logger.error("Error viewing cart: %s", e)
         return jsonify({"message": "Internal Server Error"}), 500
 
 

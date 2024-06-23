@@ -1,6 +1,7 @@
 import psycopg2
 import helpers
 
+
 # This class contains all the methods that interact with the database
 class dbmethods:
     def __init__(self):
@@ -79,7 +80,10 @@ class dbmethods:
     # Get a single item
     def get_cart_item(self, user_id, itemName, itemPrice):
         self.cur.execute(
-            "SELECT * FROM cart WHERE user_id = %s AND itemName = %s AND itemPrice = %s AND bought = False",
+            """
+            SELECT * FROM cart
+            WHERE user_id = %s AND itemName = %s AND itemPrice = %s AND bought = False
+            """,
             (user_id, itemName, itemPrice))
         return self.cur.fetchall()
 
@@ -88,10 +92,26 @@ class dbmethods:
         self.cur.execute(
             "SELECT name FROM users WHERE id = %s", (user_id,))
         user = self.cur.fetchone()
+
         self.cur.execute(
-            "SELECT * FROM cart WHERE user_id = %s AND bought = False", (user_id,))
-        items = [{"id": item[0], "itemName": item[2], "itemPrice": float(item[3]), "itemQuantity": item[4]} for item in self.cur.fetchall()]
-        return {"userName": user[0], "userID": user_id, "items": items}
+            """
+            SELECT id, itemName, itemPrice, itemQuantity, 
+                   SUM(itemPrice * itemQuantity) OVER (PARTITION BY user_id) as total
+            FROM cart 
+            WHERE user_id = %s AND bought = False
+            """,
+            (user_id,))
+
+        rows = self.cur.fetchall()
+
+        if rows:
+            total = float(rows[0][4])
+        else:
+            total = 0.0
+
+        items = [{"id": row[0], "itemName": row[1], "itemPrice": float(row[2]), "itemQuantity": row[3]} for row in rows]
+
+        return {"userName": user[0], "userID": user_id, "items": items, "total": total}
 
     # Remove from cart
     def remove_from_cart(self, cart_id):
@@ -129,7 +149,12 @@ class dbmethods:
             "SELECT name FROM users WHERE id = %s", (user_id,))
         user = self.cur.fetchone()
         self.cur.execute(
-            "SELECT os.id, os.orderDate, oh.itemName, oh.itemPrice, oh.itemQuantity FROM order_sessions os JOIN order_history oh ON os.id = oh.session_id WHERE os.user_id = %s ORDER BY os.orderDate DESC", (user_id,))
+            """
+            SELECT os.id, os.orderDate, oh.itemName, oh.itemPrice, oh.itemQuantity
+            FROM order_sessions os JOIN order_history oh ON os.id = oh.session_id 
+            WHERE os.user_id = %s ORDER BY os.orderDate DESC
+            """,
+            (user_id,))
         history = self.cur.fetchall()
         sessions = {}
         for record in history:
@@ -144,7 +169,7 @@ class dbmethods:
                 "itemPrice": float(record[3]),
                 "itemQuantity": record[4]
             })
-        return {"userName": user[0], "sessions": sessions}
+        return {"userName": user[0], "userID": user_id, "sessions": sessions}
 
     def closeConnection(self):
         self.connection.close()

@@ -113,7 +113,7 @@ If the price and Item name are same it should update the quantity
 #### 5. Update Cart Quantity
 
 - **URL:** `http://localhost:5000/updateCartQuantity`
-- **Method:** `POST`
+- **Method:** `PUT`
 - **Headers:**
   - `Content-Type: application/json`
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
@@ -129,7 +129,7 @@ Replace with the actual cart item id you want to update
 #### 6. Remove Item from Cart
 
 - **URL:** `http://localhost:5000/removeFromCart`
-- **Method:** `POST`
+- **Method:** `DELETE`
 - **Headers:**
   - `Content-Type: application/json`
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
