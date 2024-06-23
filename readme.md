@@ -30,7 +30,7 @@ git clone https://github.com/kartike2001/ShoppingBackend.git
 2. **CD into the repository directory**
     
 3. **Start the Docker containers:**
-
+Make sure that the docker app is running
 ```sh
 docker-compose up --build
 ```
@@ -46,6 +46,8 @@ This command will build the Docker images and start the containers for the Flask
 - **Headers:** 
   - `Content-Type: application/json`
 - **Body:**
+  
+To test on Postman select raw JSON
 
 ```json
 {
@@ -62,6 +64,8 @@ This command will build the Docker images and start the containers for the Flask
 - **Headers:**
   - `Content-Type: application/json`
 - **Body:**
+  
+To test on Postman select raw JSON
 
 ```json
 {
@@ -80,6 +84,9 @@ This command will build the Docker images and start the containers for the Flask
 - **Body:**
 
 Won't be able to enter a negative `itemPrice` or a zero/negative `itemQuantity`
+
+To test on Postman select raw JSON
+
 ```json
 {
     "itemName": "IntelliVue MX400",
@@ -119,6 +126,9 @@ If the price and Item name are same it should update the quantity
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
 Replace with the actual cart item id you want to update
+
+To test on Postman select raw JSON
+
 ```json
 {
     "cart_id": 1, 
@@ -134,6 +144,8 @@ Replace with the actual cart item id you want to update
   - `Content-Type: application/json`
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 - **Body:**
+  
+To test on Postman select raw JSON
 
 ```json
 {
