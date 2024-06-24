@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const authToken = document.cookie.split('=')[1];
 
                         fetch('/removeFromCart', {
-                            method: 'POST',
+                            method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Cookie': `authToken=${authToken}`
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const authToken = document.cookie.split('=')[1];
 
                         fetch('/updateCartQuantity', {
-                            method: 'POST',
+                            method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Cookie': `authToken=${authToken}`
@@ -187,52 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    if (profileForm) {
-        profileForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const name = document.getElementById('profile-name').value;
-            const email = document.getElementById('profile-email').value;
-            const authToken = document.cookie.split('=')[1];
-
-            fetch('/updateUserProfile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': `authToken=${authToken}`
-                },
-                body: JSON.stringify({ name, email })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                });
-        });
-
-        loadUserProfile();
-    }
-
-    function loadUserProfile() {
-        const authToken = document.cookie.split('=')[1];
-
-        fetch('/userProfile', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Cookie': `authToken=${authToken}`
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('profile-name').value = data.name;
-                document.getElementById('profile-email').value = data.email;
-            });
-    }
-
     if (orderHistoryDiv) {
-        loadOrderHistory();
-    }
-
-    function loadOrderHistory() {
         const authToken = document.cookie.split('=')[1];
 
         fetch('/orderHistory', {
