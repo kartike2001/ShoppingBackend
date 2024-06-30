@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            fetch('/createUser', {
+            fetch('/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            fetch('/verifyUser', {
+            fetch('/users/verify', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const itemQuantity = document.getElementById('item-quantity').value;
             const authToken = document.cookie.split('=')[1];
 
-            fetch('/addToCart', {
+            fetch('/cart/items', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
         checkoutButton.addEventListener('click', function () {
             const authToken = document.cookie.split('=')[1];
 
-            fetch('/checkoutCart', {
+            fetch('/cart/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function () {
-            fetch('/logout', {
+            fetch('/users/logout', {
                 method: 'POST'
             })
                 .then(response => response.json())
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadCart() {
         const authToken = document.cookie.split('=')[1];
 
-        fetch('/viewCart', {
+        fetch('/cart', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const cart_id = this.getAttribute('data-id');
                         const authToken = document.cookie.split('=')[1];
 
-                        fetch('/removeFromCart', {
+                        fetch('/cart/items', {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const itemQuantity = this.value;
                         const authToken = document.cookie.split('=')[1];
 
-                        fetch('/updateCartQuantity', {
+                        fetch('/cart/items', {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (orderHistoryDiv) {
         const authToken = document.cookie.split('=')[1];
 
-        fetch('/orderHistory', {
+        fetch('/orders/history', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

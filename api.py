@@ -51,7 +51,7 @@ def send_static(path):
 
 
 # Create a new user endpoint
-@app.route('/createUser', methods=['POST'])
+@app.route('/users', methods=['POST'])
 def create_user():
     try:
         userInformation = request.json
@@ -74,7 +74,7 @@ def create_user():
 
 
 # Verify user endpoint
-@app.route('/verifyUser', methods=['POST'])
+@app.route('/users/verify', methods=['POST'])
 def verify_user():
     try:
         userInformation = request.json
@@ -100,7 +100,7 @@ def verify_user():
 
 
 # Add Item to cart endpoint
-@app.route('/addToCart', methods=['POST'])
+@app.route('/cart/items', methods=['POST'])
 def add_to_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -142,7 +142,7 @@ def add_to_cart():
 
 
 # Update cart quantity endpoint
-@app.route('/updateCartQuantity', methods=['PUT'])
+@app.route('/cart/items', methods=['PUT'])
 def update_cart_quantity():
     try:
         authToken = request.cookies.get('authToken')
@@ -174,7 +174,7 @@ def update_cart_quantity():
 
 
 # Remove from cart endpoint
-@app.route('/removeFromCart', methods=['DELETE'])
+@app.route('/cart/items', methods=['GET'])
 def remove_from_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -197,7 +197,7 @@ def remove_from_cart():
 
 
 # View Cart endpoint
-@app.route('/viewCart', methods=['GET'])
+@app.route('/cart/items', methods=['GET'])
 def view_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -219,7 +219,7 @@ def view_cart():
 
 
 # Checkout cart endpoint
-@app.route('/checkoutCart', methods=['POST'])
+@app.route('/cart/checkout', methods=['POST'])
 def checkout_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -241,7 +241,7 @@ def checkout_cart():
 
 
 # Get user order history endpoint
-@app.route('/orderHistory', methods=['GET'])
+@app.route('/users/orderHistory', methods=['GET'])
 def order_history():
     try:
         authToken = request.cookies.get('authToken')
@@ -263,7 +263,7 @@ def order_history():
 
 
 # Logout endpoint
-@app.route('/logout', methods=['POST'])
+@app.route('/users/logout', methods=['POST'])
 def logout():
     try:
         response = make_response(jsonify({"message": "User logged out successfully"}))
