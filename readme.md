@@ -41,7 +41,7 @@ This command will build the Docker images and start the containers for the Flask
 
 #### 1. Register a New User 
 
-- **URL:** `http://localhost:8080/users`
+- **URL:** `http://localhost:8080/users/create`
 - **Method:** `POST`
 - **Headers:** 
   - `Content-Type: application/json`

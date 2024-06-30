@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const checkoutButton = document.getElementById('checkout-button');
     const cartItemsDiv = document.getElementById('cart-items');
     const logoutButton = document.getElementById('logout-button');
-    const profileForm = document.getElementById('profile-form');
     const orderHistoryDiv = document.getElementById('order-history');
     const cartTotal = document.getElementById('cart-total');
     const userNameHeader = document.getElementById('user-name');
@@ -17,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            fetch('/users', {
+            fetch('/users/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

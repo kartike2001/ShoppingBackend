@@ -51,7 +51,7 @@ def send_static(path):
 
 
 # Create a new user endpoint
-@app.route('/users', methods=['POST'])
+@app.route('/users/create', methods=['POST'])
 def create_user():
     try:
         userInformation = request.json
