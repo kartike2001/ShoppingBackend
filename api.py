@@ -174,7 +174,7 @@ def update_cart_quantity():
 
 
 # Remove from cart endpoint
-@app.route('/cart/items', methods=['GET'])
+@app.route('/cart/items', methods=['DELETE'])
 def remove_from_cart():
     try:
         authToken = request.cookies.get('authToken')

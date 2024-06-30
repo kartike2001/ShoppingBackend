@@ -114,7 +114,7 @@ If the price and Item name are same it should update the quantity
 
 #### 4. View Cart
 
-- **URL:** `http://localhost:8080/cart`
+- **URL:** `http://localhost:8080/cart/items`
 - **Method:** `GET`
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)

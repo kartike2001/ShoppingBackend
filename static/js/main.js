@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadCart() {
         const authToken = document.cookie.split('=')[1];
 
-        fetch('/cart', {
+        fetch('/cart/items', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
