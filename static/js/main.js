@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (orderHistoryDiv) {
         const authToken = document.cookie.split('=')[1];
 
-        fetch('/orders/history', {
+        fetch('/users/orderHistory', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
