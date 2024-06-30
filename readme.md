@@ -12,6 +12,8 @@ This is a simple Shopping Cart service implemented using Flask and PostgreSQL. T
 
 ## Getting Started
 
+The Project has been deployed online on Google Cloud Platform and can be accessed using the following link - http://35.232.110.28:8080/ so if you wish to test the deployed version please replace `localhost` with `35.232.110.28` it is the IP address of the server.
+
 ### Prerequisites
 
 - Docker
