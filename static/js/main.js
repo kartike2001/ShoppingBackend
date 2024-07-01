@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     alert(data.message);
                     if (data.message === "User created successfully") {
-                        window.location.href = '/cart';
+                        window.location.href = '/login';
                     }
                 });
         });

@@ -60,13 +60,11 @@ def create_user():
         plainTextPassword = helpers.sanitize_input(userInformation["password"])
         salt = bcrypt.gensalt()
         hashedPassword = bcrypt.hashpw(plainTextPassword.encode('utf-8'), salt)
-        authToken = helpers.generate_token()
         db = dbmethods()
-        db.create_user(name, email, hashedPassword.decode(), hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+        db.create_user(name, email, hashedPassword.decode(), None)
         db.close_connection()
         content = {"message": "User created successfully"}
         response = make_response(jsonify(content))
-        response.set_cookie(key="authToken", value=authToken, httponly=True, max_age=3600)
         return response, 201
     except Exception as e:
         logger.error("Error creating user: %s", e)
@@ -271,7 +269,7 @@ def logout():
             db = dbmethods()
             user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
-                db.clear_auth_token(user[0][0])
+                db.update_auth_token(user[0][0], None)
                 db.close_connection()
                 response = make_response(jsonify({"message": "User logged out successfully"}))
                 response.set_cookie(key='authToken', value='', expires=0)
