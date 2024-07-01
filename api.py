@@ -263,7 +263,6 @@ def order_history():
 
 
 # Logout endpoint
-# Logout endpoint
 @app.route('/users/logout', methods=['POST'])
 def logout():
     try:
