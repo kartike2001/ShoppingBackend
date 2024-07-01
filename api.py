@@ -280,7 +280,7 @@ def logout():
                 db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
-            return jsonify({"message": "Not logged in provided"}), 400
+            return jsonify({"message": "Not logged in"}), 400
     except Exception as e:
         logger.error("Error logging out: %s", e)
         return jsonify({"message": "Internal Server Error"}), 500
