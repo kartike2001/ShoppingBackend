@@ -171,5 +171,10 @@ class dbmethods:
             })
         return {"userName": user[0], "userID": user_id, "sessions": sessions}
 
-    def closeConnection(self):
+    def clear_auth_token(self, user_id):
+        self.cur.execute(
+            "UPDATE users SET authToken = NULL WHERE id = %s", (user_id,))
+        self.connection.commit()
+
+    def close_connection(self):
         self.connection.close()
