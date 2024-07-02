@@ -61,6 +61,14 @@ def create_user():
         salt = bcrypt.gensalt()
         hashedPassword = bcrypt.hashpw(plainTextPassword.encode('utf-8'), salt)
         db = dbmethods()
+        existing_user = db.get_user_by_email(email)
+
+        if existing_user:
+            db.close_connection()
+            content = {"message": "User already exists"}
+            response = make_response(jsonify(content))
+            return response, 409
+
         db.create_user(name, email, hashedPassword.decode(), None)
         db.close_connection()
         content = {"message": "User created successfully"}
