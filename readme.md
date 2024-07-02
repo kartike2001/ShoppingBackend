@@ -165,7 +165,7 @@ To test on Postman select raw JSON
 
 #### 8. View Order History
 
-- **URL:** `http://localhost:8080/orders/history`
+- **URL:** `http://localhost:8080/users/orderHistory`
 - **Method:** `GET`
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
