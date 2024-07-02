@@ -125,6 +125,12 @@ def add_to_cart():
                 if itemQuantity <= 0:
                     return jsonify({"message": "Quantity must not be 0 or non-negative"}), 400
 
+                roundedQuantity = int(itemQuantity)
+                if roundedQuantity != itemQuantity:
+                    rounding_message = f" Quantity rounded down from {itemQuantity} to {roundedQuantity}. "
+                else:
+                    rounding_message = ""
+
                 existing_item = db.get_cart_item(user[0][0], itemName, itemPrice)
 
                 if existing_item:
@@ -136,6 +142,9 @@ def add_to_cart():
                     message = f"Added {itemName} to the cart!"
 
                 db.close_connection()
+
+                message += rounding_message
+
                 return jsonify({"message": message}), 200
             else:
                 db.close_connection()
@@ -168,7 +177,14 @@ def update_cart_quantity():
                 else:
                     db.update_cart_quantity(cart_id, itemQuantity)
                     db.close_connection()
-                    return jsonify({"message": "Cart item quantity updated"}), 200
+
+                    roundedQuantity = int(itemQuantity)
+                    if roundedQuantity != itemQuantity:
+                        rounding_message = f" Quantity rounded down from {itemQuantity} to {roundedQuantity}. "
+                    else:
+                        rounding_message = ""
+
+                    return jsonify({"message": "Cart item quantity updated" + rounding_message}), 200
             else:
                 db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
