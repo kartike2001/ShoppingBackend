@@ -52,6 +52,12 @@ class dbmethods:
             (name, email, hashedPass, authToken))
         self.connection.commit()
 
+    # Get user by email
+    def get_user_by_email(self, email):
+        self.cur.execute(
+            "SELECT * FROM users WHERE email = %s", (email,))
+        return self.cur.fetchone()
+
     # Verify login
     def verify_login(self, email):
         self.cur.execute(
@@ -171,5 +177,5 @@ class dbmethods:
             })
         return {"userName": user[0], "userID": user_id, "sessions": sessions}
 
-    def closeConnection(self):
+    def close_connection(self):
         self.connection.close()

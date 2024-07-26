@@ -12,6 +12,8 @@ This is a simple Shopping Cart service implemented using Flask and PostgreSQL. T
 
 ## Getting Started
 
+The Project has been deployed online on Google Cloud Platform and can be accessed using the following link - http://35.232.110.28:8080/ so if you wish to test the deployed version please replace `localhost` with `35.232.110.28` it is the IP address of the server.
+
 ### Prerequisites
 
 - Docker
@@ -28,7 +30,7 @@ git clone https://github.com/kartike2001/ShoppingBackend.git
 ```
 
 2. **CD into the repository directory**
-    
+
 3. **Start the Docker containers:**
 Make sure that the docker app is running
 ```sh
@@ -41,12 +43,12 @@ This command will build the Docker images and start the containers for the Flask
 
 #### 1. Register a New User 
 
-- **URL:** `http://localhost:8080/createUser`
+- **URL:** `http://localhost:8080/users/create`
 - **Method:** `POST`
 - **Headers:** 
   - `Content-Type: application/json`
 - **Body:**
-  
+
 To test on Postman select raw JSON
 
 ```json
@@ -59,12 +61,12 @@ To test on Postman select raw JSON
 
 #### 2. Log in as the User
 
-- **URL:** `http://localhost:8080/verifyUser`
+- **URL:** `http://localhost:8080/users/verify`
 - **Method:** `POST`
 - **Headers:**
   - `Content-Type: application/json`
 - **Body:**
-  
+
 To test on Postman select raw JSON
 
 ```json
@@ -76,7 +78,7 @@ To test on Postman select raw JSON
 
 #### 3. Add Items to the Cart
 
-- **URL:** `http://localhost:8080/addToCart`
+- **URL:** `http://localhost:8080/cart/items`
 - **Method:** `POST`
 - **Headers:**
   - `Content-Type: application/json`
@@ -112,14 +114,14 @@ If the price and Item name are same it should update the quantity
 
 #### 4. View Cart
 
-- **URL:** `http://localhost:8080/viewCart`
+- **URL:** `http://localhost:8080/cart/items`
 - **Method:** `GET`
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
 #### 5. Update Cart Quantity
 
-- **URL:** `http://localhost:8080/updateCartQuantity`
+- **URL:** `http://localhost:8080/cart/items`
 - **Method:** `PUT`
 - **Headers:**
   - `Content-Type: application/json`
@@ -131,31 +133,31 @@ To test on Postman select raw JSON
 
 ```json
 {
-    "cart_id": 1, 
+    "cart_id": 1,
     "itemQuantity": 5
 }
 ```
 
 #### 6. Remove Item from Cart
 
-- **URL:** `http://localhost:8080/removeFromCart`
+- **URL:** `http://localhost:8080/cart/items`
 - **Method:** `DELETE`
 - **Headers:**
   - `Content-Type: application/json`
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 - **Body:**
-  
+
 To test on Postman select raw JSON
 
 ```json
 {
-    "cart_id": 1  
+    "cart_id": 1
 }
 ```
 
 #### 7. Checkout Cart
 
-- **URL:** `http://localhost:8080/checkoutCart`
+- **URL:** `http://localhost:8080/cart/checkout`
 - **Method:** `POST`
 - **Headers:**
   - `Content-Type: application/json`
@@ -163,12 +165,12 @@ To test on Postman select raw JSON
 
 #### 8. View Order History
 
-- **URL:** `http://localhost:8080/orderHistory`
+- **URL:** `http://localhost:8080/users/orderHistory`
 - **Method:** `GET`
 - **Headers:**
   - `Cookie: authToken=<your_auth_token>` (Make sure header is checked)
 
 #### 9. Logout
 
-- **URL:** `http://localhost:8080/logout`
+- **URL:** `http://localhost:8080/users/logout`
 - **Method:** `POST`

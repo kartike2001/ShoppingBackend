@@ -51,7 +51,7 @@ def send_static(path):
 
 
 # Create a new user endpoint
-@app.route('/createUser', methods=['POST'])
+@app.route('/users/create', methods=['POST'])
 def create_user():
     try:
         userInformation = request.json
@@ -60,13 +60,19 @@ def create_user():
         plainTextPassword = helpers.sanitize_input(userInformation["password"])
         salt = bcrypt.gensalt()
         hashedPassword = bcrypt.hashpw(plainTextPassword.encode('utf-8'), salt)
-        authToken = helpers.generate_token()
         db = dbmethods()
-        db.create_user(name, email, hashedPassword.decode(), hashlib.sha256(authToken.encode("utf-8")).hexdigest())
-        db.closeConnection()
+        existing_user = db.get_user_by_email(email)
+
+        if existing_user:
+            db.close_connection()
+            content = {"message": "User already exists"}
+            response = make_response(jsonify(content))
+            return response, 409
+
+        db.create_user(name, email, hashedPassword.decode(), None)
+        db.close_connection()
         content = {"message": "User created successfully"}
         response = make_response(jsonify(content))
-        response.set_cookie(key="authToken", value=authToken, httponly=True, max_age=3600)
         return response, 201
     except Exception as e:
         logger.error("Error creating user: %s", e)
@@ -74,7 +80,7 @@ def create_user():
 
 
 # Verify user endpoint
-@app.route('/verifyUser', methods=['POST'])
+@app.route('/users/verify', methods=['POST'])
 def verify_user():
     try:
         userInformation = request.json
@@ -85,14 +91,14 @@ def verify_user():
         if user and bcrypt.checkpw(plainTextPassword.encode('utf-8'), user[0][3].encode('utf-8')):
             authToken = helpers.generate_token()
             db.update_auth_token(user[0][0], hashlib.sha256(authToken.encode("utf-8")).hexdigest())
-            db.closeConnection()
+            db.close_connection()
             content = {"message": "User verified successfully", "name": user[0][1], "user_id": user[0][0],
                        "email": user[0][2], "authToken": authToken}
             response = make_response(jsonify(content))
             response.set_cookie(key="authToken", value=authToken, httponly=True, max_age=3600)
             return response, 200
         else:
-            db.closeConnection()
+            db.close_connection()
             return jsonify({"message": "User verification failed"}), 401
     except Exception as e:
         logger.error("Error verifying user: %s", e)
@@ -100,7 +106,7 @@ def verify_user():
 
 
 # Add Item to cart endpoint
-@app.route('/addToCart', methods=['POST'])
+@app.route('/cart/items', methods=['POST'])
 def add_to_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -129,10 +135,10 @@ def add_to_cart():
                     db.add_to_cart(user[0][0], itemName, itemPrice, itemQuantity)
                     message = f"Added {itemName} to the cart!"
 
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": message}), 200
             else:
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
             return jsonify({"message": "Authentication required"}), 401
@@ -142,7 +148,7 @@ def add_to_cart():
 
 
 # Update cart quantity endpoint
-@app.route('/updateCartQuantity', methods=['PUT'])
+@app.route('/cart/items', methods=['PUT'])
 def update_cart_quantity():
     try:
         authToken = request.cookies.get('authToken')
@@ -157,14 +163,14 @@ def update_cart_quantity():
                     return jsonify({"message": "You can't set quantity negative"}), 400
                 elif itemQuantity == 0:
                     db.remove_from_cart(cart_id)
-                    db.closeConnection()
+                    db.close_connection()
                     return jsonify({"message": "Item removed from cart"}), 200
                 else:
                     db.update_cart_quantity(cart_id, itemQuantity)
-                    db.closeConnection()
+                    db.close_connection()
                     return jsonify({"message": "Cart item quantity updated"}), 200
             else:
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
             return jsonify({"message": "Authentication required"}), 401
@@ -174,7 +180,7 @@ def update_cart_quantity():
 
 
 # Remove from cart endpoint
-@app.route('/removeFromCart', methods=['DELETE'])
+@app.route('/cart/items', methods=['DELETE'])
 def remove_from_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -184,10 +190,10 @@ def remove_from_cart():
             if user:
                 cart_id = helpers.sanitize_input(request.json['cart_id'])
                 db.remove_from_cart(cart_id)
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "Item removed from cart"}), 200
             else:
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
             return jsonify({"message": "Authentication required"}), 401
@@ -197,7 +203,7 @@ def remove_from_cart():
 
 
 # View Cart endpoint
-@app.route('/viewCart', methods=['GET'])
+@app.route('/cart/items', methods=['GET'])
 def view_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -206,10 +212,10 @@ def view_cart():
             user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 cart = db.view_cart(user[0][0])
-                db.closeConnection()
+                db.close_connection()
                 return jsonify(cart), 200
             else:
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
             return jsonify({"message": "Authentication required"}), 401
@@ -219,7 +225,7 @@ def view_cart():
 
 
 # Checkout cart endpoint
-@app.route('/checkoutCart', methods=['POST'])
+@app.route('/cart/checkout', methods=['POST'])
 def checkout_cart():
     try:
         authToken = request.cookies.get('authToken')
@@ -228,10 +234,10 @@ def checkout_cart():
             user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 db.checkout_entire_cart(user[0][0])
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "Cart checked out successfully"}), 200
             else:
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
             return jsonify({"message": "Authentication required"}), 401
@@ -241,7 +247,7 @@ def checkout_cart():
 
 
 # Get user order history endpoint
-@app.route('/orderHistory', methods=['GET'])
+@app.route('/users/orderHistory', methods=['GET'])
 def order_history():
     try:
         authToken = request.cookies.get('authToken')
@@ -250,10 +256,10 @@ def order_history():
             user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
             if user:
                 history = db.get_order_history(user[0][0])
-                db.closeConnection()
+                db.close_connection()
                 return jsonify(history), 200
             else:
-                db.closeConnection()
+                db.close_connection()
                 return jsonify({"message": "User verification failed"}), 401
         else:
             return jsonify({"message": "Authentication required"}), 401
@@ -263,12 +269,24 @@ def order_history():
 
 
 # Logout endpoint
-@app.route('/logout', methods=['POST'])
+@app.route('/users/logout', methods=['POST'])
 def logout():
     try:
-        response = make_response(jsonify({"message": "User logged out successfully"}))
-        response.set_cookie(key='authToken', value='', expires=0)
-        return response, 200
+        authToken = request.cookies.get('authToken')
+        if authToken:
+            db = dbmethods()
+            user = db.verify_auth(hashlib.sha256(authToken.encode("utf-8")).hexdigest())
+            if user:
+                db.update_auth_token(user[0][0], None)
+                db.close_connection()
+                response = make_response(jsonify({"message": "User logged out successfully"}))
+                response.set_cookie(key='authToken', value='', expires=0)
+                return response, 200
+            else:
+                db.close_connection()
+                return jsonify({"message": "User verification failed"}), 401
+        else:
+            return jsonify({"message": "Not logged in"}), 400
     except Exception as e:
         logger.error("Error logging out: %s", e)
         return jsonify({"message": "Internal Server Error"}), 500

@@ -1,6 +1,7 @@
 import random
 import string
 
+
 def escape_sql(value):
     value = value.replace("'", "''")
     value = value.replace("\\", "\\\\")
